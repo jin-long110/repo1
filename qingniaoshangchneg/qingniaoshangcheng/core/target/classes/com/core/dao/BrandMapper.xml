@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.core.dao.BrandMapper">
+	<!-- 品牌数据添加 -->
+	<insert id="insertBrand" parameterType="brand" useGeneratedKeys="true" keyProperty="id" >
+		insert into qnsport_brand
+		(id,name,description,logo,url,status)
+		values
+		(#{id},#{name},#{description},#{logo},#{url},#{status})
+	</insert>
+	
+	<sql id="sqlfiled">
+		id,name,description,logo,url,status
+	</sql>
+	
+	<!-- 通过的条件查询带分页 -->
+	<select id="selectByExample" parameterType="brandExample" resultType="brand">
+		select <include refid="sqlfiled"/> from qnsport_brand
+		<where>
+			<if test="status !=null">
+				status = #{status}
+			</if>
+			<if test="name !=null">
+				and name like "%"#{name}"%"
+			</if>
+		</where>
+		order by id desc
+		<if test="startRow !=null">
+			limit #{startRow},#{pageSize}
+		</if>
+	</select>
+	
+	<!-- 查询所有数据不分页 -->
+	<select id="selectAllByExample" parameterType="brandExample" resultType="brand" >
+		select <include refid="sqlfiled"/> from qnsport_brand
+		<where>
+			<if test="status !=null">
+				status = #{status}
+			</if>
+			<if test="name !=null">
+				and name like "%"#{name}"%"
+			</if>
+		</where>
+	</select>
+	
+	<!-- 查询满足条件的记录数 -->
+	<select id="selectCount" parameterType="brandExample" resultType="Integer" >
+		select count(*) from qnsport_brand
+		<where>
+			<if test="status !=null">
+				status = #{status}
+			</if>
+			<if test="name !=null">
+				and name like "%"#{name}"%"
+			</if>
+		</where>
+	</select>
+	
+	<delete id="batchDelete" parameterType="Long[]" >
+		delete from qnsport_brand
+		where id in
+		<foreach collection="array" item="id" open="(" separator="," close=")" >
+			#{id}			
+		</foreach>
+	</delete>
+	
+	<select id="selectById" parameterType="Long" resultType="brand" >
+		select <include refid="sqlfiled"/> from qnsport_brand where id = #{id}
+	</select>
+	
+	<update id="editSave" parameterType="brand" >
+		update qnsport_brand
+		<set>
+			<if test="name !=null">
+				name = #{name},
+			</if>
+			<if test="description !=null">
+				description = #{description},
+			</if>
+			<if test="url !=null">
+				url = #{url},
+			</if>
+			<if test="logo !=null">
+				logo = #{logo},
+			</if>
+			<if test="status !=null">
+				status = #{status}
+			</if>
+			where id = #{id}											
+		</set>
+	</update>
+	
+</mapper>
